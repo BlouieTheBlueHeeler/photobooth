@@ -57,7 +57,7 @@ class Gpio:
                          'exit_pin=%d, rgb_pins=(%d, %d, %d))'),
                          lamp_pin, trigger_pin, exit_pin, *rgb_pin)
 
-            self._gpio.setButton(trigger_pin, self.trigger)
+            self._gpio.setButton(trigger_pin, self.trigger, pull_up_pin=False)
             self._gpio.setButton(exit_pin, self.exit)
             self._lamp = self._gpio.setLamp(lamp_pin)
             self._rgb = self._gpio.setRgb(rgb_pin)
@@ -131,7 +131,7 @@ class Gpio:
             # the issue of too slow preview
 
     def trigger(self):
-
+        print("trigger gpio")
         if self._is_trigger:
             self.disableTrigger()
             self._comm.send(Workers.MASTER, StateMachine.GpioEvent('trigger'))
@@ -206,10 +206,10 @@ class Entities:
         for l in self._rgb:
             l.off()
 
-    def setButton(self, bcm_pin, handler):
+    def setButton(self, bcm_pin, handler, pull_up_pin=True):
 
         try:
-            self._buttons.append(self.Button(bcm_pin))
+            self._buttons.append(self.Button(bcm_pin, pull_up=pull_up_pin))
             self._buttons[-1].when_pressed = handler
         except self.GPIOPinInUse:
             logging.error('Pin {} already in use!'.format(bcm_pin))

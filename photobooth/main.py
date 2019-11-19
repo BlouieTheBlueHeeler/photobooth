@@ -173,6 +173,11 @@ def run(argv, is_run):
 
     logging.info('Photobooth version: %s', __version__)
 
+    from gpiozero.pins.rpigpio import RPiGPIOFactory
+    pin_factory = RPiGPIOFactory()
+    pin_19 = pin_factory.pin(19)
+    pin_19.output_with_state(True)
+
     # Load configuration
     config = Config('photobooth.cfg')
 
